@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rumor Dodger</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Ruwmor Dodger🦖</h1>
+    <p class="description">
+      Kamu adalah dino bijak yang ogah kena gosip. Lompat kiri-kanan, hindari
+      bola-bola rumor, dan buktikan: kamu bukan kaum gabut yang gampang termakan
+      kabar burung! 🌪️
+      <br /><br />
+    </p>
+
+    <p>
+      Score: <span id="score">0</span> | High Score:
+      <span id="highScore">0</span>
+    </p>
+    <div class="game-area">
+      <img id="player" src="img/player.png" />
+      <!-- asteroid akan dibuat lewat JS -->
+    </div>
+
+    <div class="controls">
+      <button id="leftBtn">⬅️</button>
+      <button id="rightBtn">➡️</button>
+    </div>
+
+    <button id="restart">Restart</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>

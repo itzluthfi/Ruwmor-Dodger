@@ -1,0 +1,52 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background-color: black;
+  color: white;
+}
+
+.description {
+  max-width: 600px;
+  margin: 10px auto;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.game-area {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  border: 2px solid white;
+  margin: 20px auto;
+  background-color: #111;
+  overflow: hidden;
+}
+
+#player {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  bottom: 10px;
+  left: 130px;
+}
+
+.asteroid {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+}
+
+.controls {
+  margin-top: 10px;
+}
+
+.controls button {
+  padding: 10px 20px;
+  font-size: 18px;
+  margin: 0 5px;
+}
+
+#restart {
+  margin-top: 10px;
+  padding: 8px 16px;
+}
