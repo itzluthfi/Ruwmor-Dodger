@@ -155,15 +155,9 @@ function startGame() {
   }, 5000);
 
   //tambah asteroid setiap 10 detik
-  asteroidAddInterval = setInterval(() => {
-    const asteroidBaru = document.createElement("img");
-    asteroidBaru.src = "img/asteroid.png";
-    asteroidBaru.classList.add("asteroid");
-    asteroidBaru.style.top = `${-Math.random() * 400}px`;
-    asteroidBaru.style.left = `${Math.floor(Math.random() * 260)}px`; // <= sesuaikan ukuran game-area
-    document.querySelector(".game-area").appendChild(asteroidBaru);
-    asteroids.push(asteroidBaru);
-  }, 10000);
+  // asteroidCount = setInterval(() => {
+  //   asteroidCount += 1;
+  // }, 10000);
 }
 
 // === Fungsi: Hentikan Game ===
