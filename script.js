@@ -43,6 +43,7 @@ musicSelect.addEventListener("change", function () {
   backgroundMusic.src = this.value;
   backgroundMusic.load();
 
+  // Hanya mainkan jika game sedang berjalan
   if (gameRunning) {
     backgroundMusic
       .play()
@@ -93,21 +94,22 @@ function cekTabrakan(asteroid) {
 }
 
 function startGame() {
+  // Mulai musik hanya jika belum dimulai
   if (!musicStarted) {
-    backgroundMusic
-      .play()
-      .then(() => {
-        console.log("Musik dimulai:", backgroundMusic.src);
-      })
-      .catch((err) => {
-        console.warn("Gagal mulai musik:", err);
-      });
     musicStarted = true;
-  } else {
-    backgroundMusic
-      .play()
-      .catch((err) => console.warn("Gagal lanjut musik:", err));
   }
+
+  backgroundMusic.pause(); // pastikan direset
+  backgroundMusic.currentTime = 0;
+  backgroundMusic.src = musicSelect.value;
+  backgroundMusic
+    .play()
+    .then(() => {
+      console.log("Musik dimulai:", backgroundMusic.src);
+    })
+    .catch((err) => {
+      console.warn("Gagal mulai musik:", err);
+    });
 
   gameRunning = true;
   updateRestartButton();
@@ -118,6 +120,7 @@ function startGame() {
   player.style.left = playerPos + "px";
   scoreDisplay.textContent = score;
 
+  // Hapus asteroid lama
   asteroids.forEach((a) => a.remove());
   asteroids = [];
 
@@ -158,11 +161,11 @@ function startGame() {
 }
 
 function stopGame() {
-  backgroundMusic.pause();
   clearInterval(gameInterval);
   clearInterval(asteroidInterval);
   clearInterval(speedIncreaseInterval);
   gameRunning = false;
+  backgroundMusic.pause();
   updateRestartButton();
 }
 
