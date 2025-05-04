@@ -20,10 +20,10 @@ let asteroidSpeed = 5;
 let musicStarted = false;
 let gameRunning = false;
 
-// Atur musik awal
-backgroundMusic.src = musicSelect.value;
+// Set musik awal
 backgroundMusic.volume = 0.5;
 backgroundMusic.muted = false;
+backgroundMusic.src = musicSelect.value;
 backgroundMusic.load();
 
 function updateRestartButton() {
@@ -37,15 +37,16 @@ function updateRestartButton() {
 }
 updateRestartButton();
 
+// Ganti musik saat user pilih
 musicSelect.addEventListener("change", function () {
   backgroundMusic.pause();
   backgroundMusic.src = this.value;
   backgroundMusic.load();
 
   if (gameRunning) {
-    backgroundMusic.play().catch((err) => {
-      console.warn("Gagal memutar musik setelah ganti:", err);
-    });
+    backgroundMusic
+      .play()
+      .catch((err) => console.warn("Gagal memutar musik:", err));
   }
 });
 
@@ -99,13 +100,13 @@ function startGame() {
         console.log("Musik dimulai:", backgroundMusic.src);
       })
       .catch((err) => {
-        console.warn("Gagal memulai musik:", err);
+        console.warn("Gagal mulai musik:", err);
       });
     musicStarted = true;
   } else {
-    backgroundMusic.play().catch((err) => {
-      console.warn("Musik gagal diputar kembali:", err);
-    });
+    backgroundMusic
+      .play()
+      .catch((err) => console.warn("Gagal lanjut musik:", err));
   }
 
   gameRunning = true;

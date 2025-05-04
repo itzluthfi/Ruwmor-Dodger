@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Ruwmor Dodger🦖</h1>
+    <h1>Rumor Dodger 🦖</h1>
     <p class="description">
       Kamu adalah dino bijak yang ogah kena gosip. Lompat kiri-kanan, hindari
       bola-bola rumor, dan buktikan: kamu bukan kaum gabut yang gampang termakan
       kabar burung! 🌪️
-      <br /><br />
     </p>
 
     <p>
@@ -24,12 +23,10 @@
     <label for="musicSelect">Pilih Musik Latar:</label>
     <select id="musicSelect">
       <option value="audio/bila-kau-tak-disampingku.mp3">
-        🎼Bila Kau Tak Disampingku
+        🎼 Bila Kau Tak Disampingku
       </option>
-      <option value="audio/hari-bersamanya.mp3">🎼Hari Bersamanya</option>
-      <option value="audio/mangu.mp3">
-        🎼Fourtwnty-Mangu ft.Charita-Utami
-      </option>
+      <option value="audio/hari-bersamanya.mp3">🎼 Hari Bersamanya</option>
+      <option value="audio/mangu.mp3">🎼 Mangu - Fourtwenty</option>
     </select>
 
     <div class="game-area">
@@ -43,15 +40,16 @@
 
     <button id="mulai">Mulai</button>
 
-    <audio id="backgroundMusic" loop></audio>
+    <audio id="backgroundMusic" loop preload="auto">
+      <source src="audio/bila-kau-tak-disampingku.mp3" type="audio/mpeg" />
+    </audio>
 
     <audio id="moveSound">
       <source src="audio/move-sound.mp3" type="audio/mpeg" />
-      Your browser does not support the audio element.
     </audio>
+
     <audio id="gameOverSound">
       <source src="audio/gameover2.mp3" type="audio/mpeg" />
-      Your browser does not support the audio element.
     </audio>
 
     <script src="script.js"></script>
