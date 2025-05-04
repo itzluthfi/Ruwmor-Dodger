@@ -2,6 +2,8 @@ const player = document.getElementById("player");
 const scoreDisplay = document.getElementById("score");
 const highScoreDisplay = document.getElementById("highScore");
 const restartBtn = document.getElementById("restart");
+const backgroundMusic = document.getElementById("backgroundMusic");
+const moveSound = document.getElementById("moveSound");
 
 let playerPos = 130;
 let score = 0;
@@ -10,7 +12,24 @@ highScoreDisplay.textContent = highScore;
 
 let gameInterval, asteroidInterval;
 let asteroids = [];
-const asteroidCount = 3; // Jumlah asteroid
+const asteroidCount = 3;
+
+let musicStarted = false;
+let gameRunning = false; // Menyimpan status game
+
+// Fungsi untuk mengupdate teks tombol
+function updateRestartButton() {
+  if (!gameRunning && score === 0) {
+    restartBtn.textContent = "Mulai!";
+  } else if (gameRunning) {
+    restartBtn.textContent = "Berhenti!";
+  } else {
+    restartBtn.textContent = "Main Lagi!";
+  }
+}
+
+// Panggil pertama kali untuk set teks awal
+updateRestartButton();
 
 function movePlayer(e) {
   if (e.key === "ArrowLeft" && playerPos > 0) {
@@ -21,25 +40,64 @@ function movePlayer(e) {
   player.style.left = playerPos + "px";
 }
 
+function cekTabrakan(asteroid) {
+  const pemainKiri = playerPos;
+  const pemainKanan = playerPos + 40;
+  const pemainAtas = 370;
+  const pemainBawah = 400;
+
+  const asteroidAtas = parseInt(asteroid.style.top);
+  const asteroidKiri = parseInt(asteroid.style.left);
+  const asteroidBawah = asteroidAtas + 40;
+  const asteroidKanan = asteroidKiri + 40;
+
+  const hitboxPemain = {
+    kiri: pemainKiri + 4,
+    kanan: pemainKanan - 4,
+    atas: pemainAtas + 4,
+    bawah: pemainBawah - 4,
+  };
+
+  const hitboxAsteroid = {
+    kiri: asteroidKiri + 4,
+    kanan: asteroidKanan - 4,
+    atas: asteroidAtas + 4,
+    bawah: asteroidBawah - 4,
+  };
+
+  return (
+    hitboxPemain.kiri < hitboxAsteroid.kanan &&
+    hitboxPemain.kanan > hitboxAsteroid.kiri &&
+    hitboxPemain.atas < hitboxAsteroid.bawah &&
+    hitboxPemain.bawah > hitboxAsteroid.atas
+  );
+}
+
 function startGame() {
+  if (!musicStarted) {
+    backgroundMusic.play();
+    musicStarted = true;
+  }
+
+  gameRunning = true;
+  updateRestartButton();
+
   score = 0;
   playerPos = 130;
   player.style.left = playerPos + "px";
   scoreDisplay.textContent = score;
 
-  // Hapus asteroid lama
   asteroids.forEach((a) => a.remove());
   asteroids = [];
 
-  // Buat asteroid baru
   for (let i = 0; i < asteroidCount; i++) {
-    const newAsteroid = document.createElement("img");
-    newAsteroid.src = "img/asteroid.png";
-    newAsteroid.classList.add("asteroid");
-    newAsteroid.style.top = `${-Math.random() * 400}px`;
-    newAsteroid.style.left = `${Math.floor(Math.random() * 260)}px`;
-    document.querySelector(".game-area").appendChild(newAsteroid);
-    asteroids.push(newAsteroid);
+    const asteroidBaru = document.createElement("img");
+    asteroidBaru.src = "img/asteroid.png";
+    asteroidBaru.classList.add("asteroid");
+    asteroidBaru.style.top = `${-Math.random() * 400}px`;
+    asteroidBaru.style.left = `${Math.floor(Math.random() * 260)}px`;
+    document.querySelector(".game-area").appendChild(asteroidBaru);
+    asteroids.push(asteroidBaru);
   }
 
   gameInterval = setInterval(() => {
@@ -49,51 +107,52 @@ function startGame() {
 
   asteroidInterval = setInterval(() => {
     asteroids.forEach((asteroid) => {
-      let asteroidTop = parseInt(window.getComputedStyle(asteroid).top);
-      let asteroidLeft = parseInt(window.getComputedStyle(asteroid).left);
+      let posisiAtas = parseInt(asteroid.style.top);
 
-      if (asteroidTop < 400) {
-        asteroid.style.top = asteroidTop + 5 + "px";
+      if (posisiAtas < 400) {
+        asteroid.style.top = posisiAtas + 5 + "px";
       } else {
         asteroid.style.top = "-40px";
         asteroid.style.left = Math.floor(Math.random() * 260) + "px";
       }
 
-      // Deteksi tabrakan
-      const playerTop = 350;
-      const playerBottom = 400;
-      const asteroidBottom = asteroidTop + 40;
-
-      if (
-        asteroidBottom > playerTop &&
-        asteroidTop < playerBottom &&
-        asteroidLeft < playerPos + 40 &&
-        asteroidLeft + 40 > playerPos
-      ) {
+      if (cekTabrakan(asteroid)) {
         gameOver();
       }
     });
   }, 30);
 }
 
-function gameOver() {
+function stopGame() {
+  backgroundMusic.pause();
   clearInterval(gameInterval);
   clearInterval(asteroidInterval);
+  gameRunning = false;
+  updateRestartButton();
+}
+
+function gameOver() {
+  stopGame();
+
   if (score > highScore) {
+    highScore = score;
     localStorage.setItem("highScore", score);
     highScoreDisplay.textContent = score;
   }
+
   alert("Game Over! Skor: " + score);
+  updateRestartButton();
 }
 
-// Keyboard
+// Event listeners
 document.addEventListener("keydown", movePlayer);
 
-// Tombol mobile
 document.getElementById("leftBtn").addEventListener("click", () => {
   if (playerPos > 0) {
     playerPos -= 10;
     player.style.left = playerPos + "px";
+    moveSound.currentTime = 0;
+    moveSound.play();
   }
 });
 
@@ -101,8 +160,15 @@ document.getElementById("rightBtn").addEventListener("click", () => {
   if (playerPos < 260) {
     playerPos += 10;
     player.style.left = playerPos + "px";
+    moveSound.currentTime = 0;
+    moveSound.play();
   }
 });
 
-// Restart
-restartBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", () => {
+  if (gameRunning) {
+    stopGame();
+  } else {
+    startGame();
+  }
+});
