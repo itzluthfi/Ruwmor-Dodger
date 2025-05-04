@@ -99,7 +99,7 @@ function startGame() {
     musicStarted = true;
   }
 
-  backgroundMusic.pause(); // pastikan direset
+  // backgroundMusic.pause(); // pastikan direset
   backgroundMusic.currentTime = 0;
   backgroundMusic.src = musicSelect.value;
   backgroundMusic
