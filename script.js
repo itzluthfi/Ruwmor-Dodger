@@ -22,6 +22,7 @@ function updateRestartButton() {
   if (!gameRunning && score === 0) {
     restartBtn.textContent = "Mulai!";
   } else if (gameRunning) {
+    backgroundMusic.play();
     restartBtn.textContent = "Berhenti!";
   } else {
     restartBtn.textContent = "Main Lagi!";
