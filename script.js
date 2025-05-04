@@ -1,37 +1,52 @@
+// === Inisialisasi Elemen ===
 const player = document.getElementById("player");
 const scoreDisplay = document.getElementById("score");
 const highScoreDisplay = document.getElementById("highScore");
-const restartBtn = document.getElementById("restart");
+const startBtn = document.getElementById("mulai");
 const backgroundMusic = document.getElementById("backgroundMusic");
 const moveSound = document.getElementById("moveSound");
+const musicSelect = document.getElementById("musicSelect");
+const gameOverSound = document.getElementById("gameOverSound");
 
+// === Variabel Game ===
 let playerPos = 130;
 let score = 0;
 let highScore = localStorage.getItem("highScore") || 0;
 highScoreDisplay.textContent = highScore;
 
-let gameInterval, asteroidInterval;
+let gameInterval, asteroidInterval, speedIncreaseInterval, asteroidAddInterval;
 let asteroids = [];
-const asteroidCount = 3;
+let asteroidCount = 3;
+let asteroidSpeed = 5;
 
 let musicStarted = false;
-let gameRunning = false; // Menyimpan status game
+let gameRunning = false;
 
-// Fungsi untuk mengupdate teks tombol
+// === Atur Musik Awal ===
+backgroundMusic.src = musicSelect.value;
+backgroundMusic.load();
+
+// === Fungsi: Update Tulisan Tombol Restart ===
 function updateRestartButton() {
   if (!gameRunning && score === 0) {
-    restartBtn.textContent = "Mulai!";
+    startBtn.textContent = "Mulai!";
   } else if (gameRunning) {
-    backgroundMusic.play();
-    restartBtn.textContent = "Berhenti!";
+    startBtn.textContent = "Berhenti!";
   } else {
-    restartBtn.textContent = "Main Lagi!";
+    startBtn.textContent = "Main Lagi!";
   }
 }
-
-// Panggil pertama kali untuk set teks awal
 updateRestartButton();
 
+// === Fungsi: Ganti Musik Saat Dropdown Dipilih ===
+musicSelect.addEventListener("change", function () {
+  backgroundMusic.pause();
+  backgroundMusic.src = this.value;
+  backgroundMusic.load();
+  if (gameRunning) backgroundMusic.play();
+});
+
+// === Fungsi: Gerakkan Pemain via Keyboard ===
 function movePlayer(e) {
   if (e.key === "ArrowLeft" && playerPos > 0) {
     playerPos -= 10;
@@ -41,11 +56,12 @@ function movePlayer(e) {
   player.style.left = playerPos + "px";
 }
 
+// === Fungsi: Deteksi Tabrakan Pemain dan Asteroid ===
 function cekTabrakan(asteroid) {
   const pemainKiri = playerPos;
   const pemainKanan = playerPos + 40;
   const pemainAtas = 370;
-  const pemainBawah = 400;
+  const pemainBawah = 410;
 
   const asteroidAtas = parseInt(asteroid.style.top);
   const asteroidKiri = parseInt(asteroid.style.left);
@@ -74,23 +90,30 @@ function cekTabrakan(asteroid) {
   );
 }
 
+// === Fungsi: Mulai Game ===
 function startGame() {
   if (!musicStarted) {
     backgroundMusic.play();
     musicStarted = true;
+  } else {
+    backgroundMusic.play(); // Pastikan musik nyala kembali
   }
 
   gameRunning = true;
   updateRestartButton();
 
+  // Reset skor, posisi, dan kecepatan awal
   score = 0;
   playerPos = 130;
+  asteroidSpeed = 5;
   player.style.left = playerPos + "px";
   scoreDisplay.textContent = score;
 
+  // Hapus asteroid lama
   asteroids.forEach((a) => a.remove());
   asteroids = [];
 
+  // Buat asteroid baru
   for (let i = 0; i < asteroidCount; i++) {
     const asteroidBaru = document.createElement("img");
     asteroidBaru.src = "img/asteroid.png";
@@ -101,29 +124,49 @@ function startGame() {
     asteroids.push(asteroidBaru);
   }
 
+  // Jalankan interval skor
   gameInterval = setInterval(() => {
     score++;
     scoreDisplay.textContent = score;
   }, 100);
 
+  // Jalankan asteroid jatuh
   asteroidInterval = setInterval(() => {
     asteroids.forEach((asteroid) => {
       let posisiAtas = parseInt(asteroid.style.top);
 
       if (posisiAtas < 400) {
-        asteroid.style.top = posisiAtas + 5 + "px";
+        asteroid.style.top = posisiAtas + asteroidSpeed + "px";
       } else {
         asteroid.style.top = "-40px";
         asteroid.style.left = Math.floor(Math.random() * 260) + "px";
       }
 
+      // Cek tabrakan
       if (cekTabrakan(asteroid)) {
         gameOver();
       }
     });
   }, 30);
+
+  // Naikkan kecepatan setiap 5 detik
+  speedIncreaseInterval = setInterval(() => {
+    asteroidSpeed += 0.5;
+  }, 5000);
+
+  //tambah asteroid setiap 10 detik
+  asteroidAddInterval = setInterval(() => {
+    const asteroidBaru = document.createElement("img");
+    asteroidBaru.src = "img/asteroid.png";
+    asteroidBaru.classList.add("asteroid");
+    asteroidBaru.style.top = `${-Math.random() * 400}px`;
+    asteroidBaru.style.left = `${Math.floor(Math.random() * 260)}px`; // <= sesuaikan ukuran game-area
+    document.querySelector(".game-area").appendChild(asteroidBaru);
+    asteroids.push(asteroidBaru);
+  }, 10000);
 }
 
+// === Fungsi: Hentikan Game ===
 function stopGame() {
   backgroundMusic.pause();
   clearInterval(gameInterval);
@@ -132,8 +175,13 @@ function stopGame() {
   updateRestartButton();
 }
 
+// === Fungsi: Saat Game Over ===
 function gameOver() {
   stopGame();
+
+  // Mainkan suara game over
+  gameOverSound.currentTime = 0;
+  gameOverSound.play();
 
   if (score > highScore) {
     highScore = score;
@@ -141,11 +189,11 @@ function gameOver() {
     highScoreDisplay.textContent = score;
   }
 
-  alert("Game Over! Skor: " + score);
+  alert("Upps, Game Over! Skor: " + score);
   updateRestartButton();
 }
 
-// Event listeners
+// === Event Listeners ===
 document.addEventListener("keydown", movePlayer);
 
 document.getElementById("leftBtn").addEventListener("click", () => {
@@ -166,7 +214,7 @@ document.getElementById("rightBtn").addEventListener("click", () => {
   }
 });
 
-restartBtn.addEventListener("click", () => {
+startBtn.addEventListener("click", () => {
   if (gameRunning) {
     stopGame();
   } else {

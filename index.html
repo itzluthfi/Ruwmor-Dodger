@@ -19,9 +19,21 @@
       Score: <span id="score">0</span> | High Score:
       <span id="highScore">0</span>
     </p>
+
+    <!-- Dropdown Musik -->
+    <label for="musicSelect">Pilih Musik Latar:</label>
+    <select id="musicSelect">
+      <option value="audio/bila-kau-tak-disampingku.mp3">
+        🎼Bila Kau Tak Disampingku
+      </option>
+      <option value="audio/hari-bersamanya.mp3">🎼Hari Bersamanya</option>
+      <option value="audio/mangu.mp3">
+        🎼Fourtwnty-Mangu ft.Charita-Utami
+      </option>
+    </select>
+
     <div class="game-area">
       <img id="player" src="img/player.png" />
-      <!-- asteroid akan dibuat lewat JS -->
     </div>
 
     <div class="controls">
@@ -29,14 +41,16 @@
       <button id="rightBtn">➡️</button>
     </div>
 
-    <button id="restart">Restart</button>
-    <audio id="backgroundMusic" loop>
-      <source src="audio/bila-kau-tak-disampingku.mp3" type="audio/mpeg" />
-      Your browser does not support the audio element.
-    </audio>
+    <button id="mulai">Mulai</button>
+
+    <audio id="backgroundMusic" loop></audio>
 
     <audio id="moveSound">
       <source src="audio/move-sound.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="gameOverSound">
+      <source src="audio/gameover2.mp3" type="audio/mpeg" />
       Your browser does not support the audio element.
     </audio>
 
